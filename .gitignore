@@ -1,0 +1,11 @@
+# Node.js modules for both frontend and backend
+**/node_modules/
+/backend/.env
+/dist/
+/build/
+*.tmp
+.DS_Store
+.vscode/
+*.swp
+Thumbs.db
+.Spotlight-V100
