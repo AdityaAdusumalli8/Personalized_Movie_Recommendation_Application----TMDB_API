@@ -1,0 +1,75 @@
+.login-container {
+    max-width: 350px;
+    margin: 60px auto;
+    background: #fefefe;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 30px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .login-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+    font-weight: normal;
+  }
+  
+  .login-container form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .login-container input[type="email"],
+  .login-container input[type="password"] {
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 0.95rem;
+    transition: border-color 0.3s;
+  }
+  
+  .login-container input[type="email"]:focus,
+  .login-container input[type="password"]:focus {
+    border-color: #888;
+    outline: none;
+  }
+  
+  .login-container button[type="submit"] {
+    background: #4CAF50;
+    border: none;
+    color: #fff;
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .login-container button[type="submit"]:hover {
+    background: #45a049;
+  }
+  
+  .login-container p {
+    text-align: center;
+    margin: 10px 0;
+    color: #d9534f; /* For error or status messages */
+  }
+  
+  .toggle-button {
+    background: none;
+    border: none;
+    color: #007BFF;
+    text-decoration: underline;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 0.95rem;
+    display: block;
+    text-align: center;
+  }
+  
+  .toggle-button:hover {
+    color: #0056b3;
+  }
+  

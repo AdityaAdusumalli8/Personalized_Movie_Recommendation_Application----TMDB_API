@@ -1,38 +1,143 @@
-.App {
-  text-align: center;
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
+.app-container {
+  background: #DCC9B8; 
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  padding: 20px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+  background: #ECDDCB;
+  padding: 10px 20px;
+  border-radius: 5px;
+}
+
+.header-button {
+  background: #ECDDCB; 
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Search Section */
+.search-section {
+  margin-bottom: 30px;
+}
+
+.search-bar {
+  display: inline-flex;
+  border: 2px solid #B2957A; 
+  border-radius: 5px;
+  overflow: hidden;
+  background: #ECDDCB; 
+}
+
+.search-input {
+  border: none;
+  padding: 10px;
+  outline: none;
+  flex: 1;
+  font-size: 1rem;
+  background: none;
+}
+
+.search-button {
+  background: none;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.search-icon {
+  display: inline-block;
+}
+
+/* Content Grid */
+.content-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-gap: 20px;
+  margin-bottom: 30px;
+}
+
+.item-card {
+  background: #EADCD2; 
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+}
+
+.poster-placeholder {
+  width: 100%;
+  height: 200px;
+  background: #F4EDE9;
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  overflow: hidden;
 }
 
-.App-link {
-  color: #61dafb;
+.poster-image {
+  width: auto;
+  height: 100%;
+  object-fit: cover;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.no-poster {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.movie-title {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  text-align: center;
+  word-wrap: break-word;
+}
+
+.add-button {
+  background: #A5C198;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Footer */
+.footer {
+  margin-top: auto;
+  text-align: center;
+  background: #ECDDCB;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.footer h2 {
+  margin: 0;
+  font-size: 1.2rem;
 }

@@ -1,48 +1,51 @@
-// const express = require('express');
-// const bcrypt = require('bcrypt');
-// const jwt = require('jsonwebtoken');
-// const User = require('../models/user'); // Sequelize User model
-// const router = express.Router();
+const express = require('express');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const { User } = require('../models'); // Ensure User is imported from index.js
+require('dotenv').config();
+const router = express.Router();
 
-// require('dotenv').config();
+// Register a new user
+router.post('/register', async (req, res) => {
+  const { username, email, password } = req.body;
+  
+  try {
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ error: 'Email already registered.' });
+    }
 
-// // Register a new user
-// router.post('/register', async (req, res) => {
-//   const { username, email, password } = req.body;
+    // Hash the password before saving
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await User.create({ username, email, password: hashedPassword });
+    res.status(201).json({ message: 'User registered successfully', user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error registering user', details: error });
+  }
+});
 
-//   try {
-//     // Hash the password
-//     const hashedPassword = await bcrypt.hash(password, 10);
+// Login a user
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
 
-//     // Create the user
-//     const user = await User.create({ username, email, password: hashedPassword });
+  try {
+    // Find the user by email
+    const user = await User.findOne({ where: { email } });
+    if (!user) return res.status(404).json({ error: 'User not found' });
 
-//     res.status(201).json({ message: 'User registered successfully', user });
-//   } catch (error) {
-//     res.status(500).json({ error: 'Error registering user', details: error });
-//   }
-// });
+    // Compare passwords
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(401).json({ error: 'Invalid credentials' });
 
-// // Login a user
-// router.post('/login', async (req, res) => {
-//   const { email, password } = req.body;
+    // Generate a token
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-//   try {
-//     // Find the user
-//     const user = await User.findOne({ where: { email } });
-//     if (!user) return res.status(404).json({ error: 'User not found' });
+    res.json({ message: 'Login successful', token, user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error logging in', details: error });
+  }
+});
 
-//     // Compare passwords
-//     const isMatch = await bcrypt.compare(password, user.password);
-//     if (!isMatch) return res.status(401).json({ error: 'Invalid credentials' });
-
-//     // Generate a token
-//     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-//     res.json({ message: 'Login successful', token });
-//   } catch (error) {
-//     res.status(500).json({ error: 'Error logging in', details: error });
-//   }
-// });
-
-// module.exports = router;
+module.exports = router;
