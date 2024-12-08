@@ -9,3 +9,4 @@
 *.swp
 Thumbs.db
 .Spotlight-V100
+/frontend/.env
