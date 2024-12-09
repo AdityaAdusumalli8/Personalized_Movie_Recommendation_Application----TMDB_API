@@ -2,21 +2,28 @@
 
 const { Watchlist, Movie, TVShow, User } = require('../models');
 
-// Get all watchlist items
+// Get all watchlist items for the logged-in user
 exports.getAllWatchlists = async (req, res) => {
   try {
+    // Assuming `req.user` contains the user information from the JWT middleware
+    const userId = req.user.id;
+
+    // Fetch watchlist items only for the logged-in user
     const watchlists = await Watchlist.findAll({
+      where: { user_id: userId },
       include: [
-        { model: User, as: 'user' },
-        { model: Movie, as: 'movie' },
-        { model: TVShow, as: 'tv_show' }
-      ]
+        { model: Movie, as: "movie" },
+        { model: TVShow, as: "tv_show" },
+      ],
     });
-    res.json(watchlists);
+
+    res.json(watchlists); // Return the user's watchlist items
   } catch (error) {
-    res.status(500).json({ error: 'Failed to retrieve watchlists.' });
+    console.error("Error retrieving watchlists:", error);
+    res.status(500).json({ error: "Failed to retrieve watchlists." });
   }
 };
+
 
 // Get a single watchlist item by ID
 exports.getWatchlistById = async (req, res) => {
@@ -42,7 +49,7 @@ exports.getWatchlistById = async (req, res) => {
 exports.createWatchlist = async (req, res) => {
   try {
     const { user_id, content_id, content_type, status } = req.body;
-
+    
     // Validate content_type
     if (!['movie', 'tv_show'].includes(content_type)) {
       return res.status(400).json({ error: 'Invalid content type.' });

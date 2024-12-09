@@ -6,6 +6,7 @@ import LoginPage from './Loginpage';
 
 function MainPage({ onLogout }) {
   const [movies, setMovies] = useState([]);
+  const [watchlist, setWatchlist] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,43 +26,68 @@ function MainPage({ onLogout }) {
       .catch(error => {
         console.error("Error fetching movies from TMDB:", error);
       });
+
+    axios.get('/api/watchlists', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(response => {
+        setWatchlist(response.data);
+      })
+      .catch(error => {
+        console.error("Error fetching watchlist:", error);
+      });
   }, [navigate]);
 
+  const handleAddToWatchlist = async (movie) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        '/api/watchlists',
+        {
+          content_id: movie.id,
+          content_type: 'movie',
+          status: 'planned',
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setWatchlist(prev => [...prev, response.data]);
+    } catch (error) {
+      console.error("Error adding movie to watchlist:", error);
+    }
+  };
+
   const handleLogout = () => {
-    // Clear token and log out
     localStorage.removeItem('token');
-    onLogout(); // Inform App that user is logged out
-    navigate('/login'); // Redirect to login page
+    onLogout();
+    navigate('/login');
   };
 
   return (
     <div className="app-container">
-      {/* Header Section */}
       <header className="header">
         <h1 className="header-title">My WatchList</h1>
-        <button 
-          className="header-button" 
-          onClick={handleLogout}
-        >
+        <button className="header-button" onClick={handleLogout}>
           Log Out
+        </button>
+        <button
+          className="header-button"
+          onClick={() => navigate('/current-watchlist')}
+        >
+          Current Watchlist
+        </button>
+        <button
+          className="header-button"
+          onClick={() => navigate('/upcoming-movies')}
+        >
+          Upcoming Movies
         </button>
       </header>
 
-      {/* Search Section */}
-      <div className="search-section">
-        <div className="search-bar">
-          <input
-            type="text"
-            placeholder="Search for Movies or TV Show..."
-            className="search-input"
-          />
-          <button className="search-button">
-            <span className="search-icon">🔍</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Content Grid */}
       <div className="content-grid">
         {movies.length > 0 ? (
           movies.map(movie => (
@@ -78,18 +104,208 @@ function MainPage({ onLogout }) {
                 )}
               </div>
               <div className="movie-title">{movie.title}</div>
-              <button className="add-button">Add</button>
+              <button
+                className="add-button"
+                onClick={() => handleAddToWatchlist(movie)}
+                disabled={watchlist.some(item => item.content_id === movie.id)}
+              >
+                {watchlist.some(item => item.content_id === movie.id)
+                  ? "Added"
+                  : "Add"}
+              </button>
             </div>
           ))
         ) : (
           <p>Loading movies...</p>
         )}
       </div>
+    </div>
+  );
+}
 
-      {/* Footer Section */}
-      <footer className="footer">
-        <h2>Upcoming Movies</h2>
-      </footer>
+function CurrentWatchlist() {
+  const [watchlist, setWatchlist] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
+    axios.get('/api/watchlists', { headers: { Authorization: `Bearer ${token}` } })
+      .then(response => {
+        setWatchlist(response.data);
+      })
+      .catch(error => {
+        console.error("Error fetching watchlist:", error);
+      });
+
+    const apiKey = process.env.REACT_APP_TMDB_API_KEY;
+    const url = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=en-US&page=1`;
+    axios.get(url)
+      .then(response => {
+        setRecommendations(response.data.results.slice(0, 5));
+      })
+      .catch(error => {
+        console.error("Error fetching recommendations:", error);
+      });
+  }, [navigate]);
+
+  const handleAddToWatchlist = async (movie) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        '/api/watchlists',
+        {
+          content_id: movie.id,
+          content_type: 'movie',
+          status: 'planned',
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setWatchlist(prev => [...prev, response.data]);
+    } catch (error) {
+      console.error("Error adding movie to watchlist:", error);
+    }
+  };
+
+  return (
+    <div className="app-container">
+      <header className="header">
+        <h1 className="header-title">Track Progress</h1>
+        <button className="header-button" onClick={() => navigate('/')}>
+          Back to Home
+        </button>
+      </header>
+
+      <h2 className="section-title">My Current Watchlist</h2>
+      <div className="content-grid">
+        {watchlist.length > 0 ? (
+          watchlist.map(item => (
+            <div key={item.id} className="item-card">
+              <div className="poster-placeholder">
+                {item.movie?.poster_url ? (
+                  <img
+                    src={item.movie.poster_url}
+                    alt={item.movie.title}
+                    className="poster-image"
+                  />
+                ) : (
+                  <div className="no-poster">No Image</div>
+                )}
+              </div>
+              <div className="movie-title">{item.movie?.title}</div>
+            </div>
+          ))
+        ) : (
+          <p>No movies in your watchlist.</p>
+        )}
+      </div>
+
+      <h2 className="section-title">Personalized Recommendations</h2>
+      <div className="content-grid">
+        {recommendations.map(movie => (
+          <div key={movie.id} className="item-card">
+            <div className="poster-placeholder">
+              {movie.poster_path ? (
+                <img
+                  src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
+                  alt={movie.title}
+                  className="poster-image"
+                />
+              ) : (
+                <div className="no-poster">No Image</div>
+              )}
+            </div>
+            <div className="movie-title">{movie.title}</div>
+            <button
+              className="add-button"
+              onClick={() => handleAddToWatchlist(movie)}
+            >
+              Add
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function UpcomingMovies() {
+  const [upcomingMovies, setUpcomingMovies] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const apiKey = process.env.REACT_APP_TMDB_API_KEY;
+    const url = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=en-US&page=1`;
+
+    axios
+      .get(url)
+      .then(response => {
+        setUpcomingMovies(response.data.results.slice(0, 5));
+      })
+      .catch(error => {
+        console.error("Error fetching upcoming movies:", error);
+      });
+  }, []);
+
+  const handleNotify = async (movie) => {
+    try {
+      const response = await axios.post('/api/notifications', {
+        content_id: movie.id,
+        notification_type: 'upcoming',
+      });
+      setNotifications(prev => [...prev, response.data]);
+    } catch (error) {
+      console.error("Error creating notification:", error);
+    }
+  };
+
+  return (
+    <div className="app-container">
+      <header className="header">
+        <h1 className="header-title">Upcoming Movies</h1>
+        <button className="header-button" onClick={() => navigate('/')}>
+          Back to Home
+        </button>
+      </header>
+
+      <div className="content-grid">
+        {upcomingMovies.map(movie => (
+          <div key={movie.id} className="item-card">
+            <div className="poster-placeholder">
+              {movie.poster_path ? (
+                <img
+                  src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
+                  alt={movie.title}
+                  className="poster-image"
+                />
+              ) : (
+                <div className="no-poster">No Image</div>
+              )}
+            </div>
+            <div className="movie-title">{movie.title}</div>
+            <button
+              className="notify-button"
+              onClick={() => handleNotify(movie)}
+              disabled={notifications.some(item => item.content_id === movie.id)}
+            >
+              {notifications.some(item => item.content_id === movie.id)
+                ? "Notify On"
+                : "Notify"}
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -97,25 +313,30 @@ function MainPage({ onLogout }) {
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
 
-  // Called after successful login
-  const handleLoginSuccess = () => {
-    setIsLoggedIn(true);
-  };
-
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-  };
-
   return (
     <Router>
       <Routes>
-        <Route 
-          path="/login" 
-          element={!isLoggedIn ? <LoginPage onLoginSuccess={handleLoginSuccess}/> : <Navigate to="/" />} 
+        <Route
+          path="/login"
+          element={
+            !isLoggedIn ? (
+              <LoginPage onLoginSuccess={() => setIsLoggedIn(true)} />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
         />
-        <Route 
-          path="/" 
-          element={isLoggedIn ? <MainPage onLogout={handleLogout}/> : <Navigate to="/login" />} 
+        <Route
+          path="/"
+          element={isLoggedIn ? <MainPage onLogout={() => setIsLoggedIn(false)} /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/current-watchlist"
+          element={isLoggedIn ? <CurrentWatchlist /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/upcoming-movies"
+          element={isLoggedIn ? <UpcomingMovies /> : <Navigate to="/login" />}
         />
       </Routes>
     </Router>
