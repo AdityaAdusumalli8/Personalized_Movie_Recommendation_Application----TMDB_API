@@ -1,22 +1,17 @@
-// routes/watchlists.js
-
 const express = require('express');
 const router = express.Router();
 const watchlistController = require('../controllers/watchlistController');
+const authenticateToken = require('../middleware/authenticateToken');
 
-// GET /api/watchlists - Get all watchlist items
-router.get('/', watchlistController.getAllWatchlists);
+router.get('/', authenticateToken, watchlistController.getAllWatchlists);
 
-// GET /api/watchlists/:id - Get a watchlist item by ID
-router.get('/:id', watchlistController.getWatchlistById);
+router.get('/:id', authenticateToken, watchlistController.getWatchlistById);
 
-// POST /api/watchlists - Create a new watchlist item
-router.post('/', watchlistController.createWatchlist);
+router.post('/', authenticateToken, watchlistController.createWatchlist);
 
-// PUT /api/watchlists/:id - Update a watchlist item by ID
-router.put('/:id', watchlistController.updateWatchlist);
+router.put('/:id', authenticateToken, watchlistController.updateWatchlist);
 
-// DELETE /api/watchlists/:id - Delete a watchlist item by ID
-router.delete('/:id', watchlistController.deleteWatchlist);
+router.delete('/:id', authenticateToken, watchlistController.deleteWatchlist);
 
 module.exports = router;
+

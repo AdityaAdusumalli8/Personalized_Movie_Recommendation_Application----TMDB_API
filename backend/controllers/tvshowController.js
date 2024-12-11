@@ -1,8 +1,5 @@
-// controllers/tvshowController.js
-
 const { TVShow } = require('../models');
 
-// Get all TV shows
 exports.getAllTVShows = async (req, res) => {
   try {
     const tvShows = await TVShow.findAll();
@@ -12,7 +9,6 @@ exports.getAllTVShows = async (req, res) => {
   }
 };
 
-// Get a single TV show by ID
 exports.getTVShowById = async (req, res) => {
   try {
     const tvShow = await TVShow.findByPk(req.params.id);
@@ -26,7 +22,6 @@ exports.getTVShowById = async (req, res) => {
   }
 };
 
-// Create a new TV show
 exports.createTVShow = async (req, res) => {
   try {
     const { tmdb_id, title, genre_ids, start_date, end_date, summary, poster_url } = req.body;
@@ -45,7 +40,7 @@ exports.createTVShow = async (req, res) => {
   }
 };
 
-// Update an existing TV show
+
 exports.updateTVShow = async (req, res) => {
   try {
     const { tmdb_id, title, genre_ids, start_date, end_date, summary, poster_url } = req.body;
@@ -69,7 +64,6 @@ exports.updateTVShow = async (req, res) => {
   }
 };
 
-// Delete a TV show
 exports.deleteTVShow = async (req, res) => {
   try {
     const tvShow = await TVShow.findByPk(req.params.id);

@@ -1,8 +1,5 @@
-// controllers/userController.js
-
 const { User } = require('../models');
 
-// Get all users
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.findAll();
@@ -12,7 +9,6 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
-// Get a single user by ID
 exports.getUserById = async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id);
@@ -26,7 +22,6 @@ exports.getUserById = async (req, res) => {
   }
 };
 
-// Create a new user
 exports.createUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -38,7 +33,6 @@ exports.createUser = async (req, res) => {
   }
 };
 
-// Update an existing user
 exports.updateUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -55,7 +49,6 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-// Delete a user
 exports.deleteUser = async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id);

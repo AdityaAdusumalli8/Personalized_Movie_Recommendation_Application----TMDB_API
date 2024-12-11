@@ -1,8 +1,5 @@
-// controllers/movieController.js
-
 const { Movie } = require('../models');
 
-// Get all movies
 exports.getAllMovies = async (req, res) => {
   try {
     const movies = await Movie.findAll();
@@ -12,7 +9,6 @@ exports.getAllMovies = async (req, res) => {
   }
 };
 
-// Get a single movie by ID
 exports.getMovieById = async (req, res) => {
   try {
     const movie = await Movie.findByPk(req.params.id);
@@ -26,7 +22,6 @@ exports.getMovieById = async (req, res) => {
   }
 };
 
-// Create a new movie
 exports.createMovie = async (req, res) => {
   try {
     const { tmdb_id, title, genre_ids, release_date, summary, poster_url } = req.body;
@@ -44,7 +39,6 @@ exports.createMovie = async (req, res) => {
   }
 };
 
-// Update an existing movie
 exports.updateMovie = async (req, res) => {
   try {
     const { tmdb_id, title, genre_ids, release_date, summary, poster_url } = req.body;
@@ -67,7 +61,6 @@ exports.updateMovie = async (req, res) => {
   }
 };
 
-// Delete a movie
 exports.deleteMovie = async (req, res) => {
   try {
     const movie = await Movie.findByPk(req.params.id);

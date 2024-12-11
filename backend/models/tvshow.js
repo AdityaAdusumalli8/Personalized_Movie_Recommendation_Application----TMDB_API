@@ -5,17 +5,13 @@ const { Model, DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
   class TVShow extends Model {
     static associate(models) {
-      // Associations can be defined here if needed
       TVShow.hasMany(models.Watchlist, {
-        foreignKey: 'content_id',
-        constraints: false,
-        scope: {
-          content_type: 'tv_show',
-        },
+        foreignKey: 'tv_show_id',
         as: 'watchlists',
       });
+      
       TVShow.hasMany(models.Notification, {
-        foreignKey: 'content_id',
+        foreignKey: 'content_id', 
         constraints: false,
         as: 'notifications',
       });

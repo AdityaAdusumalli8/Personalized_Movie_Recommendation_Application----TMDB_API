@@ -1,22 +1,21 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useContext } from 'react';
+import api from './Api';
 import './Loginpage.css';
-// import { useNavigate } from 'react-router-dom';
+import { AuthContext } from './AuthContext';
 
-function LoginPage({ onLoginSuccess }) {
+function LoginPage() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
 
-  //const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isRegistering) {
-      // Register a new user
-      axios.post('/api/auth/register', { username, email, password })
+      api.post('/auth/register', { username, email, password })
         .then(response => {
           setMessage(`Registration successful: ${response.data.user.username}. Please login now.`);
           setIsRegistering(false);
@@ -29,11 +28,9 @@ function LoginPage({ onLoginSuccess }) {
           setMessage(err.response?.data?.error || 'Registration failed');
         });
     } else {
-      // Login existing user
-      axios.post('/api/auth/login', { email, password })
+      api.post('/auth/login', { email, password })
         .then(response => {
-          localStorage.setItem('token', response.data.token);
-          onLoginSuccess();
+          login(response.data.token);
         })
         .catch(err => {
           console.error(err);
@@ -76,7 +73,7 @@ function LoginPage({ onLoginSuccess }) {
       {message && <p>{message}</p>}
       <button className="toggle-button" onClick={() => {
         setIsRegistering(!isRegistering);
-        setMessage(''); // Clear messages when toggling
+        setMessage('');
       }}>
         {isRegistering ? 'Already have an account? Login' : 'Need an account? Register'}
       </button>
@@ -85,5 +82,3 @@ function LoginPage({ onLoginSuccess }) {
 }
 
 export default LoginPage;
-
-

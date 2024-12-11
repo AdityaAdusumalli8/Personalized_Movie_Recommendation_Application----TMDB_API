@@ -1,14 +1,11 @@
-// models/notification.js
-
 const { Model, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
   class Notification extends Model {
     static associate(models) {
-      // Associations
+
       Notification.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
 
-      // Polymorphic association for content (Movie or TVShow)
       Notification.belongsTo(models.Movie, {
         foreignKey: 'content_id',
         constraints: false,

@@ -1,23 +1,18 @@
-// models/watchlist.js
-
 const { Model, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
   class Watchlist extends Model {
     static associate(models) {
-      // Associations
       Watchlist.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
 
-      // Polymorphic association for content (Movie or TVShow)
       Watchlist.belongsTo(models.Movie, {
-        foreignKey: 'content_id',
-        constraints: false,
-        as: 'movie',
+        foreignKey: 'movie_id',
+        as: 'movie'
       });
+
       Watchlist.belongsTo(models.TVShow, {
-        foreignKey: 'content_id',
-        constraints: false,
-        as: 'tv_show',
+        foreignKey: 'tv_show_id',
+        as: 'tv_show'
       });
     }
   }
@@ -38,16 +33,23 @@ module.exports = (sequelize) => {
         },
         onDelete: 'CASCADE',
       },
-      content_id: {
+      movie_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      content_type: {
-        type: DataTypes.STRING(50),
-        allowNull: false,
-        validate: {
-          isIn: [['movie', 'tv_show']],
+        allowNull: true,
+        references: {
+          model: 'movies',
+          key: 'id',
         },
+        onDelete: 'CASCADE',
+      },
+      tv_show_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'tv_shows',
+          key: 'id',
+        },
+        onDelete: 'CASCADE',
       },
       status: {
         type: DataTypes.STRING(50),

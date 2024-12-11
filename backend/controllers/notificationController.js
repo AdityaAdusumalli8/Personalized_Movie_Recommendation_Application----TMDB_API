@@ -1,8 +1,5 @@
-// controllers/notificationController.js
-
 const { Notification, User, Movie, TVShow } = require('../models');
 
-// Get all notifications
 exports.getAllNotifications = async (req, res) => {
   try {
     const notifications = await Notification.findAll({
@@ -18,7 +15,6 @@ exports.getAllNotifications = async (req, res) => {
   }
 };
 
-// Get a single notification by ID
 exports.getNotificationById = async (req, res) => {
   try {
     const notification = await Notification.findByPk(req.params.id, {
@@ -38,7 +34,6 @@ exports.getNotificationById = async (req, res) => {
   }
 };
 
-// Create a new notification
 exports.createNotification = async (req, res) => {
   try {
     const { user_id, content_id, notification_type, scheduled_at } = req.body;
@@ -64,7 +59,6 @@ exports.createNotification = async (req, res) => {
   }
 };
 
-// Update an existing notification
 exports.updateNotification = async (req, res) => {
   try {
     const { content_id, notification_type, scheduled_at, sent_at } = req.body;
@@ -94,7 +88,6 @@ exports.updateNotification = async (req, res) => {
   }
 };
 
-// Delete a notification
 exports.deleteNotification = async (req, res) => {
   try {
     const notification = await Notification.findByPk(req.params.id);

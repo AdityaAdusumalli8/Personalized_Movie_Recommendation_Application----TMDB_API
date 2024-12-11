@@ -1,20 +1,13 @@
-
-// models/movie.js
-
 const { Model, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
   class Movie extends Model {
     static associate(models) {
-      // Associations can be defined here if needed
       Movie.hasMany(models.Watchlist, {
-        foreignKey: 'content_id',
-        constraints: false,
-        scope: {
-          content_type: 'movie',
-        },
+        foreignKey: 'movie_id',
         as: 'watchlists',
       });
+      
       Movie.hasMany(models.Notification, {
         foreignKey: 'content_id',
         constraints: false,
